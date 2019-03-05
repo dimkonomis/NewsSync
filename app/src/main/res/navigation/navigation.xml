@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@+id/placeholderFragment">
+
+    <fragment
+        android:id="@+id/placeholderFragment"
+        android:name="com.dk.newssync.presentation.ui.placeholder.PlaceholderFragment"
+        android:label="PlaceholderFragment">
+        <action
+            android:id="@+id/action_placeholderFragment_to_listFragment"
+            app:destination="@id/listFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/listFragment"
+        android:name="com.dk.newssync.presentation.ui.search.SearchFragment"
+        android:label="ListFragment"
+        app:launchSingleTop="true"
+
+        tools:layout="@layout/fragment_search">
+        <argument
+            android:name="@string/entry"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_listFragment_to_storyFragment"
+            app:destination="@id/storyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/storyFragment"
+        android:name="com.dk.newssync.presentation.ui.story.StoryFragment"
+        android:label="StoryFragment"
+        tools:layout="@layout/fragment_story">
+        <argument
+            android:name="@string/story"
+            app:argType="com.dk.newssync.data.entity.Story" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFavoritesFragment"
+        android:name="com.dk.newssync.presentation.ui.search.SearchFavoritesFragment"
+        android:label="SearchFavoritesFragment"
+        tools:layout="@layout/fragment_search" />
+</navigation>

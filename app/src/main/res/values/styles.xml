@@ -1,0 +1,46 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/open_sans</item>
+    </style>
+
+    <style name="AppTheme.Main" parent="AppTheme">
+        <item name="android:windowActivityTransitions">true</item>
+        <item name="android:windowContentTransitions">true</item>
+    </style>
+
+    <style name="IconButton" parent="Widget.MaterialComponents.Button.OutlinedButton.Icon">
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="iconPadding">0dp</item>
+        <item name="strokeWidth">0dp</item>
+        <item name="iconSize">@dimen/spacingMedium</item>
+        <item name="android:layout_height">@dimen/spacingLarge</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="iconTint">@color/colorPrimaryDark</item>
+    </style>
+
+    <style name="FavoriteButton">
+        <item name="android:background">?actionBarItemBackground</item>
+        <item name="android:layout_width">@dimen/spacingExtra</item>
+        <item name="android:layout_height">@dimen/spacingExtra</item>
+        <item name="android:padding">@dimen/spacingMedium</item>
+        <item name="android:scaleType">center</item>
+    </style>
+
+    <style name="BottomSheet" parent="@style/Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/background_white_round_top_corners</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="@style/Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
+        <item name="bottomSheetStyle">@style/BottomSheet</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+</resources>

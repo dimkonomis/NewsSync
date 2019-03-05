@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/spacingHuge"
+        android:paddingEnd="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin">
+
+        <ImageView
+            android:id="@+id/coverImageView"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/backgrounds/scenic" />
+
+        <TextView
+            android:id="@+id/authorText"
+            style="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacingMedium"
+            android:textSize="@dimen/textHint"
+            app:layout_constraintEnd_toStartOf="@+id/favoriteButton"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/coverImageView"
+            tools:text="@tools:sample/lorem" />
+
+        <com.dk.newssync.presentation.views.FavoriteButton
+            android:id="@+id/favoriteButton"
+            style="@style/FavoriteButton"
+            android:layout_height="@dimen/spacingHuge"
+            app:layout_constraintBottom_toBottomOf="@id/authorText"
+            app:layout_constraintEnd_toStartOf="@id/shareButton"
+            app:layout_constraintTop_toTopOf="@id/authorText" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/shareButton"
+            style="@style/IconButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/icon_share"
+            app:layout_constraintBottom_toBottomOf="@id/authorText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/authorText" />
+
+        <TextView
+            android:id="@+id/headLineText"
+            style="@style/TextAppearance.MaterialComponents.Headline6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacingSmall"
+            app:layout_constraintTop_toBottomOf="@+id/authorText"
+            tools:text="@tools:sample/lorem" />
+
+        <TextView
+            android:id="@+id/descriptionText"
+            style="@style/TextAppearance.MaterialComponents.Body1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacingSmall"
+            app:layout_constraintTop_toBottomOf="@+id/headLineText"
+            tools:text="@tools:sample/lorem" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/chromeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacingSmall"
+            android:layout_marginBottom="@dimen/spacingMedium"
+            android:text="@string/see_full_story"
+            app:backgroundTint="@color/colorPrimaryDark"
+            app:cornerRadius="@dimen/spacingMedium"
+            app:icon="@drawable/icon_chrome_reader"
+            app:iconSize="@dimen/spacingMedium"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionText" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
