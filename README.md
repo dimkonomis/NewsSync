@@ -33,3 +33,7 @@ The app allows for multiple inputs and multiple lists which can be viewed offlin
 git clone https://github.com/dimkonomis/NewsSync.git
 ~~~~
 * Get your Api key from [NewsApi](https://newsapi.org/) and replace it [here](https://github.com/dimkonomis/NewsSync/blob/master/app/src/main/java/com/dk/newssync/data/source/network/NetworkHeadersInterceptor.kt)
+
+
+## Inspiration
+This repo is inspired from [DroidKaigi 2018](https://github.com/DroidKaigi/conference-app-2018)
