@@ -43,7 +43,6 @@ class SyncService: DaggerService(), CoroutineScope {
 
         showNotification()
         launch { startSync() }
-        dismissNotification()
     }
 
     override fun onDestroy() {
@@ -51,8 +50,9 @@ class SyncService: DaggerService(), CoroutineScope {
         serviceJob.cancel()
     }
 
-    private suspend fun startSync() {
-        coroutineScope { syncUseCase.syncStories() }
+    private suspend fun startSync() = coroutineScope {
+        syncUseCase.syncStories()
+        dismissNotification()
     }
 
     private fun showNotification() {
