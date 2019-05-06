@@ -34,6 +34,8 @@ git clone https://github.com/dimkonomis/NewsSync.git
 ~~~~
 * Get your Api key from [NewsApi](https://newsapi.org/) and replace it [here](https://github.com/dimkonomis/NewsSync/blob/master/app/src/main/java/com/dk/newssync/data/source/network/NetworkHeadersInterceptor.kt)
 
+## Coroutines
+You can view the project's Coroutines version, instead of RxJava, on [coroutines branch](https://github.com/dimkonomis/NewsSync/tree/coroutines)
 
 ## Inspiration
 This repo is inspired from [DroidKaigi 2018](https://github.com/DroidKaigi/conference-app-2018)
