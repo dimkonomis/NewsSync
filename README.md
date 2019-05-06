@@ -7,7 +7,7 @@ The app allows for multiple inputs and multiple lists which can be viewed offlin
 </p>
 
 ## Summary
-* MVVM pattern using [RxJava2](https://github.com/ReactiveX/RxJava) and [Architecture components](https://developer.android.com/topic/libraries/architecture)
+* MVVM pattern using [Coroutines](https://kotlinlang.org/docs/reference/coroutines-overview.html) and [Architecture components](https://developer.android.com/topic/libraries/architecture)
 * Rest API from [NewsApi](https://newsapi.org/)
 * Sync news every 3 hours using [WorkManager](https://developer.android.com/topic/libraries/architecture/workmanager)
 * Store data using [Room](https://developer.android.com/topic/libraries/architecture/room)
@@ -20,7 +20,7 @@ The app allows for multiple inputs and multiple lists which can be viewed offlin
   * Room
   * WorkManager
   * Navigation
-* RxJava2
+* Coroutines
 * Dagger2
 * ThreeTenABP
 * JUnit
