@@ -15,7 +15,7 @@ import javax.inject.Inject
  * Created by Dimitris Konomis (konomis.dimitris@gmail.com) on 03/01/2019.
  **/
 
-class MainViewModel @Inject constructor(private val entriesUseCase: EntriesUseCase): BaseViewModel() {
+class MainViewModel @Inject constructor(private val entriesUseCase: EntriesUseCase) : BaseViewModel() {
 
     private val _selectedEntry: SingleLiveEvent<State<Entry?>> =
         SingleLiveEvent()
@@ -23,11 +23,9 @@ class MainViewModel @Inject constructor(private val entriesUseCase: EntriesUseCa
     val selectedEntry: LiveData<State<Entry?>>
         get() = _selectedEntry
 
-    fun findSelected() {
-        viewModelScope.launch {
-            _selectedEntry.postValue(State.loading())
-            _selectedEntry.postValue(entriesUseCase.getSelected().toState())
-        }
+    fun findSelected() = viewModelScope.launch {
+        _selectedEntry.postValue(State.loading())
+        _selectedEntry.postValue(entriesUseCase.getSelected().toState())
     }
 
 }

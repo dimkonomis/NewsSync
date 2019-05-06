@@ -27,25 +27,19 @@ class SearchViewModel @Inject constructor(private val searchUseCase: SearchUseCa
     val favorites: LiveData<State<List<Story>>>
         get() = _favorites
 
-    fun getStories() {
-        viewModelScope.launch {
-            _stories.postValue(State.loading())
-            _stories.postValue(searchUseCase.searchStories(q).toState())
-        }
+    fun getStories() = viewModelScope.launch {
+        _stories.postValue(State.loading())
+        _stories.postValue(searchUseCase.searchStories(q).toState())
     }
 
-    fun getFavorites() {
-        viewModelScope.launch {
-            _favorites.postValue(State.loading())
-            _favorites.postValue(searchUseCase.getFavorites().toState())
-        }
+    fun getFavorites() = viewModelScope.launch  {
+        _favorites.postValue(State.loading())
+        _favorites.postValue(searchUseCase.getFavorites().toState())
     }
 
-    fun toggleFavorite(story: Story) {
-        viewModelScope.launch {
-            searchUseCase.toggleFavorite(story)
-            _stories.postValue(searchUseCase.searchStories(q).toState())
-        }
+    fun toggleFavorite(story: Story) = viewModelScope.launch {
+        searchUseCase.toggleFavorite(story)
+        _stories.postValue(searchUseCase.searchStories(q).toState())
     }
 
 }

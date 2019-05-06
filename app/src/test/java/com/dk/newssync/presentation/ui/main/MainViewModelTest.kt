@@ -2,15 +2,16 @@ package com.dk.newssync.presentation.ui.main
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import com.dk.newssync.data.Result
 import com.dk.newssync.data.entity.Entry
 import com.dk.newssync.data.usecase.EntriesUseCase
 import com.dk.newssync.presentation.common.State
+import com.dk.newssync.presentation.ui.DispatcherRule
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import io.reactivex.Flowable
-import org.junit.Assert.*
+import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -28,6 +29,8 @@ class MainViewModelTest {
 
     @get:Rule
     var rule: TestRule = InstantTaskExecutorRule()
+    @get:Rule
+    val dispatcherRule: TestRule = DispatcherRule()
 
     @Mock
     lateinit var entriesUseCase: EntriesUseCase
@@ -40,28 +43,30 @@ class MainViewModelTest {
     }
 
     @Test
-    fun testGetSelectedThenStateSuccess() {
+    fun testGetSelectedThenStateSuccess() = runBlocking {
         val entry = Entry(id = 1)
-        val observer: Observer<State<Entry>> = mock()
+        val result = Result.success(entry)
+        val observer: Observer<State<Entry?>> = mock()
 
-        whenever(entriesUseCase.getSelected()).doReturn(Flowable.just(entry))
+        whenever(entriesUseCase.getSelected()).doReturn(result)
 
         mainViewModel.selectedEntry.observeForever(observer)
-        mainViewModel.findSelected()
+        mainViewModel.findSelected().join()
 
         verify(entriesUseCase).getSelected()
         verify(observer).onChanged(State.success(entry))
     }
 
     @Test
-    fun testGetSelectedThenStateError() {
-        val error = Throwable("Unknown Error")
-        val observer: Observer<State<Entry>> = mock()
+    fun testGetSelectedThenStateError() = runBlocking {
+        val error = Exception("Unknown Error")
+        val result = Result.error(error)
+        val observer: Observer<State<Entry?>> = mock()
 
-        whenever(entriesUseCase.getSelected()).doReturn(Flowable.error(error))
+        whenever(entriesUseCase.getSelected()).doReturn(result)
 
         mainViewModel.selectedEntry.observeForever(observer)
-        mainViewModel.findSelected()
+        mainViewModel.findSelected().join()
 
         verify(entriesUseCase).getSelected()
         verify(observer).onChanged(State.error(error.localizedMessage, error))

@@ -9,14 +9,13 @@ import com.dk.newssync.data.usecase.SearchUseCase
 import com.dk.newssync.presentation.common.*
 import com.dk.newssync.presentation.ui.base.BaseViewModel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 /**
  * Created by Dimitris Konomis (konomis.dimitris@gmail.com) on 03/01/2019.
  **/
 
-class StoryViewModel @Inject constructor(private val searchUseCase: SearchUseCase): BaseViewModel() {
+class StoryViewModel @Inject constructor(private val searchUseCase: SearchUseCase) : BaseViewModel() {
 
     private val _favoriteAction: SingleLiveEvent<State<Boolean>> = SingleLiveEvent()
     private val _story: MutableLiveData<Story> = MutableLiveData()
@@ -27,18 +26,14 @@ class StoryViewModel @Inject constructor(private val searchUseCase: SearchUseCas
     val story: LiveData<Story>
         get() = _story
 
-    fun getStory(id: Long = 0) {
-        viewModelScope.launch {
-            _story.postValue((searchUseCase.getStory(id) as Result.Success).data)
-        }
+    fun getStory(id: Long = 0) = viewModelScope.launch {
+        _story.postValue((searchUseCase.getStory(id) as Result.Success).data)
     }
 
-    fun toggleFavorite(story: Story) {
-        viewModelScope.launch {
-            when(val updated = searchUseCase.toggleFavorite(story)) {
-                is Result.Success -> _favoriteAction.postValue(State.success(!story.favorite))
-                is Result.Error -> _favoriteAction.postValue(State.error(updated.exception.message ?: "Unknown Error", updated.exception))
-            }
+    fun toggleFavorite(story: Story) = viewModelScope.launch {
+        when(val updated = searchUseCase.toggleFavorite(story)) {
+            is Result.Success -> _favoriteAction.postValue(State.success(!story.favorite))
+            is Result.Error -> _favoriteAction.postValue(State.error(updated.exception.message ?: "Unknown Error", updated.exception))
         }
     }
 

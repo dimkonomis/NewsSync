@@ -36,24 +36,20 @@ class EntriesViewModel @Inject constructor(private val entriesUseCase: EntriesUs
     val entries: LiveData<State<List<Entry>>>
         get() = _entries
 
-    fun getEntries() {
-        viewModelScope.launch {
-            _entries.postValue(State.loading())
-            _entries.postValue(entriesUseCase.getEntries().toState())
-        }
+    fun getEntries() = viewModelScope.launch  {
+        _entries.postValue(State.loading())
+        _entries.postValue(entriesUseCase.getEntries().toState())
     }
 
     fun validate(input: String?) {
         _nameValidation.postValue(input?.isNotBlank())
     }
 
-    fun submit(name: String?) {
-        viewModelScope.launch {
-            newEntryState.postValue(State.loading())
-            when(val inserted = entriesUseCase.insertEntry(name)) {
-                is Result.Success -> newEntryState.postValue(State.success(true))
-                is Result.Error -> newEntryState.postValue(State.error(inserted.exception.message ?: "Unknown Error", inserted.exception))
-            }
+    fun submit(name: String?) = viewModelScope.launch {
+        newEntryState.postValue(State.loading())
+        when(val inserted = entriesUseCase.insertEntry(name)) {
+            is Result.Success -> newEntryState.postValue(State.success(true))
+            is Result.Error -> newEntryState.postValue(State.error(inserted.exception.message ?: "Unknown Error", inserted.exception))
         }
     }
 
