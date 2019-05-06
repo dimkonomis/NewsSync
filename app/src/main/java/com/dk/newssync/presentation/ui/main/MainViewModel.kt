@@ -1,13 +1,14 @@
 package com.dk.newssync.presentation.ui.main
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.viewModelScope
 import com.dk.newssync.data.entity.Entry
 import com.dk.newssync.data.usecase.EntriesUseCase
 import com.dk.newssync.presentation.ui.base.BaseViewModel
 import com.dk.newssync.presentation.common.State
 import com.dk.newssync.presentation.common.SingleLiveEvent
-import com.dk.newssync.presentation.common.defaultErrorHandler
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
+import com.dk.newssync.presentation.common.toState
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -16,16 +17,17 @@ import javax.inject.Inject
 
 class MainViewModel @Inject constructor(private val entriesUseCase: EntriesUseCase): BaseViewModel() {
 
-    val selectedEntry: SingleLiveEvent<State<Entry>> =
+    private val _selectedEntry: SingleLiveEvent<State<Entry?>> =
         SingleLiveEvent()
 
+    val selectedEntry: LiveData<State<Entry?>>
+        get() = _selectedEntry
+
     fun findSelected() {
-        entriesUseCase.getSelected()
-            .doOnSubscribe { selectedEntry.postValue(State.loading()) }
-            .doOnNext { entry -> selectedEntry.postValue(State.success(entry)) }
-            .doOnError { e -> selectedEntry.postValue(State.error(e.message ?: "Unknown Error", e)) }
-            .subscribeBy(onError = defaultErrorHandler())
-            .addTo(compositeDisposable)
+        viewModelScope.launch {
+            _selectedEntry.postValue(State.loading())
+            _selectedEntry.postValue(entriesUseCase.getSelected().toState())
+        }
     }
 
 }

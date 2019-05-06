@@ -1,9 +1,10 @@
 package com.dk.newssync.data.usecase
 
+import com.dk.newssync.data.Result
 import com.dk.newssync.data.executor.BaseSchedulerProvider
 import com.dk.newssync.data.repository.EntriesRepository
 import com.dk.newssync.data.repository.StoriesRepository
-import io.reactivex.Completable
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,14 +19,13 @@ class SyncUseCase @Inject constructor(
     private val schedulerProvider: BaseSchedulerProvider
 ) {
 
-    fun syncStories(): Completable {
-        return entriesRepository.getEntries()
-            .subscribeOn(schedulerProvider.io())
-            .flattenAsObservable { entries -> entries }
-            .flatMap { entry -> storiesRepository.appendStories(entry.name, entry.id).toObservable() }
-            .toList()
-            .ignoreElement()
-            .observeOn(schedulerProvider.ui())
+    suspend fun syncStories() = withContext(schedulerProvider.io) {
+        val entries = entriesRepository.getEntries()
+        when(entries) {
+            is Result.Success -> {
+                entries.data.forEach { entry -> storiesRepository.appendStories(entry.name, entry.id) }
+            }
+        }
     }
 
 }

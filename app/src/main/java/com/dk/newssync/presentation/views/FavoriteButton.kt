@@ -67,8 +67,10 @@ class FavoriteButton @JvmOverloads constructor(
     }
 
     override fun toggle() {
+        isEnabled = false
         isChecked = !isChecked
         updateDrawable()
+        handler.postDelayed({ isEnabled = true }, 300)
     }
 
     private fun updateDrawableWithoutAnimation() {

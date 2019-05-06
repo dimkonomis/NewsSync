@@ -53,10 +53,13 @@ open class SearchFragment : BaseFragmentDagger() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        searchViewModel.q = arguments?.getString(getString(R.string.entry))
-        searchViewModel.stories.observe(requireActivity(), Observer { state ->
-            showState(state)
-        })
+        with(searchViewModel) {
+            q = arguments?.getString(getString(R.string.entry))
+            stories.observe(requireActivity(), Observer { state ->
+                showState(state)
+            })
+            getStories()
+        }
     }
 
     override fun getLayout(): Int = R.layout.fragment_search

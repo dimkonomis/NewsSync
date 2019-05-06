@@ -27,6 +27,18 @@ android {
     androidExtensions {
         experimental = true
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+        exclude 'META-INF/atomicfu.kotlin_module'
+    }
 }
 
 dependencies {
@@ -34,6 +46,8 @@ dependencies {
 
     // Kotlin Dependencies
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlinVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutinesVersion"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutinesVersion"
 
     // AndroidX Dependencies
     implementation "com.google.android.material:material:$rootProject.materialVersion"
@@ -42,13 +56,13 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$rootProject.constraintLayoutVersion"
     implementation "androidx.browser:browser:$rootProject.browserVersion"
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
-    implementation "androidx.room:room-rxjava2:$rootProject.roomVersion"
+    implementation "androidx.room:room-coroutines:$rootProject.roomVersion"
     kapt "androidx.room:room-compiler:$rootProject.roomVersion"
 
     // Architecture Dependencies
     implementation "android.arch.lifecycle:runtime:$rootProject.lifecycleVersion"
     implementation "android.arch.lifecycle:extensions:$rootProject.lifecycleVersion"
-    implementation "android.arch.lifecycle:reactivestreams:$rootProject.lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.lifecycleVersion"
     implementation "android.arch.paging:runtime:$rootProject.pagingVersion"
 
     // Arch Dependencies
@@ -56,15 +70,10 @@ dependencies {
     implementation "android.arch.navigation:navigation-fragment:$rootProject.navigationVersion"
     implementation "android.arch.navigation:navigation-fragment-ktx:$rootProject.navigationVersion"
 
-    // Rx Dependencies
-    implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxJavaVersion"
-    implementation "io.reactivex.rxjava2:rxkotlin:$rootProject.rxKotlinVersion"
-    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxAndroidVersion"
-
     // Retrofit2 Dependencies
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofitVersion"
+    implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
     implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okhttpVersion"
 
     // Dagger Dependencies

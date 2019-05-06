@@ -1,23 +1,22 @@
 package com.dk.newssync.data.repository
 
+import com.dk.newssync.data.Result
 import com.dk.newssync.data.entity.Story
-import io.reactivex.Flowable
-import io.reactivex.Single
 
 /**
  * Created by Dimitris Konomis (konomis.dimitris@gmail.com) on 13/11/2018.
  **/
 
-interface StoriesRepository {
+interface StoriesRepository: Repository {
 
-    fun searchStories(q: String?): Flowable<List<Story>>
+    suspend fun searchStories(q: String?): Result<List<Story>>
 
-    fun appendStories(q: String?, entryId: Long): Flowable<List<Story>>
+    suspend fun appendStories(q: String?, entryId: Long): Result<List<Story>>
 
-    fun getStory(id: Long?): Flowable<Story>
+    suspend fun getStory(id: Long?): Result<Story>
 
-    fun getFavorites(): Flowable<List<Story>>
+    suspend fun getFavorites(): Result<List<Story>>
 
-    fun toggleFavorite(id: Long, favorite: Boolean): Single<Int>
+    suspend fun toggleFavorite(id: Long, favorite: Boolean): Result<Int>
 
 }

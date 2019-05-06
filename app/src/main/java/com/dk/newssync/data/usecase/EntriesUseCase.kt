@@ -1,10 +1,10 @@
 package com.dk.newssync.data.usecase
 
+import com.dk.newssync.data.Result
 import com.dk.newssync.data.entity.Entry
 import com.dk.newssync.data.executor.BaseSchedulerProvider
 import com.dk.newssync.data.repository.EntriesRepository
-import io.reactivex.*
-import io.reactivex.functions.BiFunction
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,43 +13,41 @@ import javax.inject.Singleton
  **/
 
 @Singleton
-class EntriesUseCase @Inject constructor(private val entriesRepository: EntriesRepository,
-                                         private val schedulerProvider: BaseSchedulerProvider
+class EntriesUseCase @Inject constructor(
+    private val entriesRepository: EntriesRepository,
+    private val schedulerProvider: BaseSchedulerProvider
 ) {
 
-    fun getEntries(): Flowable<List<Entry>> {
-        return Single.zip(entriesRepository.getEntries(), entriesRepository.getSelected(),
-            BiFunction<List<Entry>, Long, List<Entry>> { entries, selected ->
-                val position = entries.indexOfFirst { entry -> entry.id == selected }
-                entries.toMutableList().apply {
-                    removeAt(position)
-                    add(0, entries[position])
+    suspend fun getEntries(): Result<List<Entry>> = withContext(schedulerProvider.ui) {
+        val selected = entriesRepository.getSelected()
+        val entries = entriesRepository.getEntries()
+        if (entries is Result.Success && entries.data.size > 1) {
+            return@withContext entries.copy(
+                entries.data.toMutableList().also {
+                    val position = it.indexOfFirst { entry -> entry.id == selected }
+                    val item = it[position]
+                    it.removeAt(position)
+                    it.add(0, item)
                 }
-            })
-            .toFlowable()
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+            )
+        }
+        return@withContext entries
     }
 
-    fun insertEntry(name: String?): Completable {
-        return entriesRepository.insertEntry(name)
-            .flatMapCompletable { id -> entriesRepository.setSelected(id) }
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+    suspend fun insertEntry(name: String?): Result<Long> = withContext(schedulerProvider.ui) {
+        val result = entriesRepository.insertEntry(name)
+        if(result is Result.Success) entriesRepository.setSelected(result.data)
+        return@withContext result
     }
 
-    fun setSelected(id: Long): Completable {
-        return entriesRepository.setSelected(id)
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+    suspend fun getSelected(): Result<Entry>  = withContext(schedulerProvider.ui) {
+        val id = entriesRepository.getSelected()
+        val selected = entriesRepository.getEntry(id)
+        return@withContext entriesRepository.getEntry(id)
     }
 
-    fun getSelected(): Flowable<Entry> {
-        return entriesRepository.getSelected()
-            .flatMap { id -> entriesRepository.getEntry(id) }
-            .toFlowable()
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+    fun setSelected(id: Long) {
+        entriesRepository.setSelected(id)
     }
 
 }

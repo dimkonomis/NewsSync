@@ -1,8 +1,7 @@
 package com.dk.newssync.data.executor
 
-import io.reactivex.Scheduler
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 /**
@@ -12,19 +11,9 @@ import javax.inject.Singleton
 @Singleton
 class SchedulerProvider : BaseSchedulerProvider {
 
-    override fun computation(): Scheduler {
-        return Schedulers.computation()
-    }
+    override val computation: CoroutineDispatcher = Dispatchers.Default
 
-    override fun io(): Scheduler {
-        return Schedulers.io()
-    }
+    override val io: CoroutineDispatcher = Dispatchers.IO
 
-    override fun multi(): Scheduler {
-        return Schedulers.newThread()
-    }
-
-    override fun ui(): Scheduler {
-        return AndroidSchedulers.mainThread()
-    }
+    override val ui: CoroutineDispatcher = Dispatchers.Main
 }

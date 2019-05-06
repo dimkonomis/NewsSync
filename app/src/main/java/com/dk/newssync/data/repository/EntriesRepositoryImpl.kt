@@ -1,9 +1,8 @@
 package com.dk.newssync.data.repository
 
+import com.dk.newssync.data.Result
 import com.dk.newssync.data.entity.Entry
 import com.dk.newssync.data.source.local.LocalSource
-import io.reactivex.Completable
-import io.reactivex.Single
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,23 +13,23 @@ import javax.inject.Singleton
 @Singleton
 class EntriesRepositoryImpl @Inject constructor(private val localSource: LocalSource) : EntriesRepository {
 
-    override fun getEntries(): Single<List<Entry>> {
-        return localSource.getEntries()
+    override suspend fun getEntries(): Result<List<Entry>> {
+        return request { localSource.getEntries() }
     }
 
-    override fun getEntry(id: Long): Single<Entry> {
-        return localSource.getEntry(id)
+    override suspend fun getEntry(id: Long): Result<Entry> {
+        return request { localSource.getEntry(id) }
     }
 
-    override fun insertEntry(name: String?): Single<Long> {
-        return localSource.insertEntry(Entry(name = name))
+    override suspend fun insertEntry(name: String?): Result<Long> {
+        return request { localSource.insertEntry(Entry(name = name)) }
     }
 
-    override fun setSelected(id: Long): Completable {
+    override suspend fun getSelected(): Long {
+        return localSource.getSelected()
+    }
+
+    override fun setSelected(id: Long) {
         return localSource.setSelected(id)
-    }
-
-    override fun getSelected(): Single<Long> {
-        return Single.fromCallable { localSource.getSelected() }
     }
 }

@@ -3,8 +3,6 @@ package com.dk.newssync.data.source.local
 import androidx.room.*
 import com.dk.newssync.data.entity.Entry
 import com.dk.newssync.data.entity.Story
-import io.reactivex.Flowable
-import io.reactivex.Single
 
 /**
  * Created by Dimitris Konomis (konomis.dimitris@gmail.com) on 13/11/2018.
@@ -14,27 +12,27 @@ import io.reactivex.Single
 interface LocalDao {
 
     @Query("SELECT * FROM stories WHERE entryId =:entryId ORDER BY timestamp DESC")
-    fun getStories(entryId: Long): Flowable<List<Story>>
+    suspend fun getStories(entryId: Long): List<Story>
 
     @Query("SELECT * FROM stories WHERE id =:id")
-    fun getStory(id: Long?): Flowable<Story>
+    suspend fun getStory(id: Long?): Story
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertStories(stories: List<Story>)
+    suspend fun insertStories(stories: List<Story>)
 
     @Query("SELECT * FROM stories WHERE favorite = 1 ORDER BY timestamp DESC")
-    fun getFavorites(): Flowable<List<Story>>
+    suspend fun getFavorites(): List<Story>
 
     @Query("UPDATE stories SET favorite = :favorite WHERE id = :id")
-    fun toggleFavorite(id: Long, favorite: Int): Int
+    suspend fun toggleFavorite(id: Long, favorite: Int): Int
 
     @Query("SELECT * FROM entries")
-    fun getEntries(): Single<List<Entry>>
+    suspend fun getEntries(): List<Entry>
 
     @Query("SELECT * FROM entries WHERE id =:id")
-    fun getEntry(id: Long): Single<Entry>
+    suspend fun getEntry(id: Long): Entry
 
-    @Insert(onConflict = OnConflictStrategy.FAIL)
-    fun insertEntry(entry: Entry): Long
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun insertEntry(entry: Entry): Long
 
 }

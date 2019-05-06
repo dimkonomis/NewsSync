@@ -12,17 +12,14 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.LiveDataReactiveStreams
 import com.bumptech.glide.Priority
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
+import com.dk.newssync.data.Result
 import com.dk.newssync.presentation.ui.base.GlideApp
-import io.reactivex.Flowable
-import org.reactivestreams.Publisher
 import timber.log.Timber
 
 /**
@@ -73,14 +70,10 @@ fun TextView.color(colorRes: Int) {
     setTextColor(context.color(colorRes))
 }
 
-fun <T> Publisher<T>.toLiveData() = LiveDataReactiveStreams.fromPublisher(this) as LiveData<T>
-
-fun <T> Flowable<T>.toState(): Flowable<State<T>> {
-    return compose { item ->
-        item
-            .map { State.success(it) }
-            .startWith(State.loading())
-            .onErrorReturn { e -> Timber.e(e); State.error(e.message ?: "Unknown Error", e) }
+fun <T> Result<T>.toState(): State<T> {
+    return when(this) {
+        is Result.Success -> State.success(data)
+        is Result.Error -> State.error(exception.message ?: "Unknown Error", exception)
     }
 }
 

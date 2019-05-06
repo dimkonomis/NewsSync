@@ -1,6 +1,6 @@
 package com.dk.newssync.data.executor
 
-import io.reactivex.Scheduler
+import kotlinx.coroutines.CoroutineDispatcher
 
 /**
  * Created by Dimitris Konomis (konomis.dimitris@gmail.com) on 13/11/2018.
@@ -8,11 +8,9 @@ import io.reactivex.Scheduler
 
 interface BaseSchedulerProvider {
 
-    fun computation(): Scheduler
+    val computation: CoroutineDispatcher
 
-    fun multi(): Scheduler
+    val io: CoroutineDispatcher
 
-    fun io(): Scheduler
-
-    fun ui(): Scheduler
+    val ui: CoroutineDispatcher
 }

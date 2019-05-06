@@ -10,13 +10,13 @@ import com.dk.newssync.data.usecase.SyncUseCase
 import com.dk.newssync.presentation.notification.NotificationChannels
 import dagger.android.*
 import javax.inject.Inject
-import io.reactivex.Completable
+import kotlinx.coroutines.*
 
 /**
  * Created by Dimitris Konomis (konomis.dimitris@gmail.com) on 27/02/2019.
  **/
 
-class SyncService: DaggerService() {
+class SyncService: DaggerService(), CoroutineScope {
 
     @Inject
     lateinit var syncUseCase: SyncUseCase
@@ -24,10 +24,13 @@ class SyncService: DaggerService() {
     lateinit var notificationManager: NotificationManagerCompat
 
     private lateinit var notificationChannels: NotificationChannels
+    private val serviceJob = Job()
 
     companion object {
         private const val NOTIFICATION_ID = 1000
     }
+
+    override val coroutineContext = serviceJob + Dispatchers.IO
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -38,11 +41,18 @@ class SyncService: DaggerService() {
             notificationChannels = NotificationChannels(this)
         }
 
-        syncUseCase.syncStories()
-            .doOnSubscribe { showNotification() }
-            .doAfterTerminate { dismissNotification() }
-            .onErrorResumeNext { Completable.complete() }
-            .subscribe()
+        showNotification()
+        launch { startSync() }
+        dismissNotification()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        serviceJob.cancel()
+    }
+
+    private suspend fun startSync() {
+        coroutineScope { syncUseCase.syncStories() }
     }
 
     private fun showNotification() {

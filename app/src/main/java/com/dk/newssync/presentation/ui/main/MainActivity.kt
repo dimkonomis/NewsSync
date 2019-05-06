@@ -117,7 +117,7 @@ class MainActivity : BaseActivityDagger() {
             dismissLoading()
             when (state) {
                 is State.Error -> showError()
-                is State.Success -> showSelectedEntry(state.data.name)
+                is State.Success -> if(state.data != null) showSelectedEntry(state.data?.name) else showError()
             }
         })
     }

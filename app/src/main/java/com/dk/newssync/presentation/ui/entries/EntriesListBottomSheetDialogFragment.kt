@@ -52,6 +52,7 @@ class EntriesListBottomSheetDialogFragment: BaseBottomSheetDialogFragment() {
                 false -> showSnackBarMessage(R.string.error)
             }
         })
+        entriesViewModel.getEntries()
     }
 
     override fun showLoading() {

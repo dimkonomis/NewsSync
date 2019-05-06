@@ -1,11 +1,10 @@
 package com.dk.newssync.data.usecase
 
+import com.dk.newssync.data.Result
 import com.dk.newssync.data.entity.Story
 import com.dk.newssync.data.executor.BaseSchedulerProvider
 import com.dk.newssync.data.repository.StoriesRepository
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import java.lang.Exception
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,31 +17,20 @@ class SearchUseCase @Inject constructor(private val storiesRepository: StoriesRe
                                         private val schedulerProvider: BaseSchedulerProvider
 ) {
 
-    fun searchStories(q: String?): Flowable<List<Story>> {
-        return storiesRepository.searchStories(q)
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+    suspend fun searchStories(q: String?): Result<List<Story>> = withContext(schedulerProvider.ui) {
+        return@withContext storiesRepository.searchStories(q)
     }
 
-    fun getStory(id: Long?): Flowable<Story> {
-        return storiesRepository.getStory(id)
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+    suspend fun getStory(id: Long?): Result<Story> = withContext(schedulerProvider.ui) {
+        return@withContext storiesRepository.getStory(id)
     }
 
-    fun getFavorites(): Flowable<List<Story>> {
-        return storiesRepository.getFavorites()
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+    suspend fun getFavorites(): Result<List<Story>> = withContext(schedulerProvider.ui) {
+        return@withContext storiesRepository.getFavorites()
     }
 
-    fun toggleFavorite(story: Story): Completable {
-        return storiesRepository.toggleFavorite(story.id, !story.favorite)
-            .flatMapCompletable { updated ->
-                if(updated == 0) throw Exception("Not Updated") else Completable.complete()
-            }
-            .subscribeOn(schedulerProvider.io())
-            .observeOn(schedulerProvider.ui())
+    suspend fun toggleFavorite(story: Story): Result<Int> = withContext(schedulerProvider.computation) {
+        return@withContext storiesRepository.toggleFavorite(story.id, !story.favorite)
     }
 
 }

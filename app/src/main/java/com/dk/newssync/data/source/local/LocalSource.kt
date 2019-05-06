@@ -2,9 +2,6 @@ package com.dk.newssync.data.source.local
 
 import com.dk.newssync.data.entity.Entry
 import com.dk.newssync.data.entity.Story
-import io.reactivex.Completable
-import io.reactivex.Flowable
-import io.reactivex.Single
 
 /**
  * Created by Dimitris Konomis (konomis.dimitris@gmail.com) on 13/11/2018.
@@ -14,29 +11,29 @@ interface LocalSource {
 
     // STORIES
 
-    fun getStories(entryId: Long?): Flowable<List<Story>>
+    suspend fun getStories(entryId: Long?): List<Story>
 
-    fun getStory(id: Long?): Flowable<Story>
+    suspend fun getStory(id: Long?): Story
 
-    fun insertStories(stories: List<Story>): Completable
+    suspend fun insertStories(stories: List<Story>)
 
-    fun getFavorites(): Flowable<List<Story>>
+    suspend fun getFavorites(): List<Story>
 
-    fun toggleFavorite(id: Long, favorite: Boolean): Single<Int>
+    suspend fun toggleFavorite(id: Long, favorite: Boolean): Int
 
     // ENTRIES
 
-    fun getEntries(): Single<List<Entry>>
+    suspend fun getEntries(): List<Entry>
 
-    fun getEntry(id: Long): Single<Entry>
+    suspend fun getEntry(id: Long): Entry
 
-    fun insertEntry(entry: Entry): Single<Long>
+    suspend fun insertEntry(entry: Entry): Long
 
     // PREFS
 
     val SELECTEDKEY : String get() = "selectedKey"
 
-    fun setSelected(id: Long): Completable
+    fun setSelected(id: Long)
 
     fun getSelected(): Long
 

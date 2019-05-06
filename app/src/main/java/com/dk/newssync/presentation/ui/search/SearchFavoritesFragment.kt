@@ -14,6 +14,7 @@ class SearchFavoritesFragment: SearchFragment() {
         searchViewModel.favorites.observe(requireActivity(), Observer { state ->
             showState(state)
         })
+        searchViewModel.getFavorites()
     }
 
 }

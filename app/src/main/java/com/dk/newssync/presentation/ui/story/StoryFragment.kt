@@ -45,16 +45,17 @@ class StoryFragment : BaseFragmentDagger() {
     override fun getLayout(): Int = R.layout.fragment_story
 
     private fun observeStory() {
-        viewModel.id = story?.id ?: 0
         viewModel.story.observe(viewLifecycleOwner, Observer { value ->
             story = value
         })
+        viewModel.getStory(story?.id ?: 0)
     }
 
     private fun observeFavoriteAction() {
         viewModel.favoriteAction.observe(viewLifecycleOwner, Observer { state ->
             when(state) {
                 is State.Success -> {
+                    story = story?.copy(favorite = state.data)
                     when(state.data) {
                         true  -> showSnackBarMessage(R.string.favorite_added)
                         false -> showSnackBarMessage(R.string.favorite_removed)

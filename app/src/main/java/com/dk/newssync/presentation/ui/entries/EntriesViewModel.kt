@@ -2,16 +2,15 @@ package com.dk.newssync.presentation.ui.entries
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.dk.newssync.data.Result
 import com.dk.newssync.data.entity.Entry
 import com.dk.newssync.data.usecase.EntriesUseCase
 import com.dk.newssync.presentation.ui.base.BaseViewModel
 import com.dk.newssync.presentation.common.State
 import com.dk.newssync.presentation.common.SingleLiveEvent
-import com.dk.newssync.presentation.common.defaultErrorHandler
-import com.dk.newssync.presentation.common.toLiveData
 import com.dk.newssync.presentation.common.toState
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -20,39 +19,47 @@ import javax.inject.Inject
 
 class EntriesViewModel @Inject constructor(private val entriesUseCase: EntriesUseCase) : BaseViewModel() {
 
-    val nameValidation: SingleLiveEvent<Boolean> =
-        SingleLiveEvent()
+    private val _nameValidation: SingleLiveEvent<Boolean> = SingleLiveEvent()
+    private val _selectedConfirmed: SingleLiveEvent<Boolean> = SingleLiveEvent()
+    private val _entries: MutableLiveData<State<List<Entry>>> = MutableLiveData()
 
-    val selectedConfirmed: SingleLiveEvent<Boolean> =
-        SingleLiveEvent()
+    val nameValidation: LiveData<Boolean>
+        get() = _nameValidation
+
+    val selectedConfirmed: LiveData<Boolean>
+        get() = _selectedConfirmed
 
     val newEntryState: MutableLiveData<State<Boolean>> by lazy {
         MutableLiveData<State<Boolean>>()
     }
 
-    val entries: LiveData<State<List<Entry>>> by lazy {
-        entriesUseCase.getEntries()
-            .toState()
-            .toLiveData()
+    val entries: LiveData<State<List<Entry>>>
+        get() = _entries
+
+    fun getEntries() {
+        viewModelScope.launch {
+            _entries.postValue(State.loading())
+            _entries.postValue(entriesUseCase.getEntries().toState())
+        }
     }
 
     fun validate(input: String?) {
-        nameValidation.postValue(input?.isNotBlank())
+        _nameValidation.postValue(input?.isNotBlank())
     }
 
     fun submit(name: String?) {
-        entriesUseCase.insertEntry(name)
-            .doOnSubscribe { newEntryState.postValue(State.loading()) }
-            .doOnError { e -> newEntryState.postValue(State.error(e.message ?: "Unknown Error", e)) }
-            .subscribeBy(onComplete = { newEntryState.postValue(State.success(true)) }, onError = defaultErrorHandler())
-            .addTo(compositeDisposable)
+        viewModelScope.launch {
+            newEntryState.postValue(State.loading())
+            when(val inserted = entriesUseCase.insertEntry(name)) {
+                is Result.Success -> newEntryState.postValue(State.success(true))
+                is Result.Error -> newEntryState.postValue(State.error(inserted.exception.message ?: "Unknown Error", inserted.exception))
+            }
+        }
     }
 
     fun setSelected(entry: Entry?) {
         entriesUseCase.setSelected(entry?.id ?: 0)
-            .doOnError { selectedConfirmed.postValue(false) }
-            .subscribeBy(onComplete = { selectedConfirmed.postValue(true) }, onError = defaultErrorHandler())
-            .addTo(compositeDisposable)
+        _selectedConfirmed.postValue(true)
     }
 
 }

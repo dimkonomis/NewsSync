@@ -1,15 +1,15 @@
 package com.dk.newssync.presentation.ui.story
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.dk.newssync.data.Result
 import com.dk.newssync.data.entity.Story
 import com.dk.newssync.data.usecase.SearchUseCase
+import com.dk.newssync.presentation.common.*
 import com.dk.newssync.presentation.ui.base.BaseViewModel
-import com.dk.newssync.presentation.common.State
-import com.dk.newssync.presentation.common.SingleLiveEvent
-import com.dk.newssync.presentation.common.defaultErrorHandler
-import com.dk.newssync.presentation.common.toLiveData
-import io.reactivex.rxkotlin.addTo
-import io.reactivex.rxkotlin.subscribeBy
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 /**
@@ -18,21 +18,28 @@ import javax.inject.Inject
 
 class StoryViewModel @Inject constructor(private val searchUseCase: SearchUseCase): BaseViewModel() {
 
-    var id: Long = 0
+    private val _favoriteAction: SingleLiveEvent<State<Boolean>> = SingleLiveEvent()
+    private val _story: MutableLiveData<Story> = MutableLiveData()
 
-    val story: LiveData<Story> by lazy {
-        searchUseCase.getStory(id)
-            .toLiveData()
+    val favoriteAction: LiveData<State<Boolean>>
+        get() = _favoriteAction
+
+    val story: LiveData<Story>
+        get() = _story
+
+    fun getStory(id: Long = 0) {
+        viewModelScope.launch {
+            _story.postValue((searchUseCase.getStory(id) as Result.Success).data)
+        }
     }
 
-    val favoriteAction: SingleLiveEvent<State<Boolean>> =
-        SingleLiveEvent()
-
     fun toggleFavorite(story: Story) {
-        searchUseCase.toggleFavorite(story)
-            .doOnError { e -> favoriteAction.postValue(State.error(e.message ?: "Unknown Error", e)) }
-            .subscribeBy(onComplete = { favoriteAction.postValue(State.success(!story.favorite)) }, onError = defaultErrorHandler())
-            .addTo(compositeDisposable)
+        viewModelScope.launch {
+            when(val updated = searchUseCase.toggleFavorite(story)) {
+                is Result.Success -> _favoriteAction.postValue(State.success(!story.favorite))
+                is Result.Error -> _favoriteAction.postValue(State.error(updated.exception.message ?: "Unknown Error", updated.exception))
+            }
+        }
     }
 
 }
