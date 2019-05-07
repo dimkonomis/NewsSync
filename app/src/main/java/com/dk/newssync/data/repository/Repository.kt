@@ -12,8 +12,8 @@ interface Repository {
 
     suspend fun <T> requestAwait(
         call: () -> Deferred<T>
-    ): Result<T> = coroutineScope {
-        try {
+    ): Result<T>  {
+        return try {
             val result = call().await()
             Result.success(result)
         } catch (exception: Exception) {
@@ -24,8 +24,8 @@ interface Repository {
 
     suspend fun <T> request(
         call: suspend () -> T
-    ): Result<T> = coroutineScope {
-        try {
+    ): Result<T>  {
+        return try {
             Result.success(call())
         } catch (exception: Exception) {
             Timber.e(exception)
